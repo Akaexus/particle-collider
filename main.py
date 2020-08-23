@@ -12,7 +12,6 @@ pyglet.gl.glClearColor(0.8, 0.8, 0.8, 0.8)
 def update_frames(dt):
     global engine
     engine.tick()
-    print('tick')
 
 @window.event
 def on_draw():
