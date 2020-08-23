@@ -1,0 +1,13 @@
+{
+  "atoms": {
+    "number": 20,
+    "mass": 1,
+    "radius": 0.5,
+    "max_velocity": 10
+  },
+  "area": {
+    "height": 50,
+    "width": 20
+  },
+  "gravity": 1
+}
