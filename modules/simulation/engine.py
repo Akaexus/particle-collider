@@ -22,7 +22,24 @@ class Engine:
         return (rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255))
 
     def tick(self):
-        self.counter += 1
+        for particle in self.area.particles:
+            # v * t = s
+            particle.x += particle.vx * self.config.tick_time
+            # s = v *t + 0.5*a*t^2
+            particle.y += particle.vy * self.config.tick_time + -self.config.gravity * 0.5 * (self.config.tick_time**2)
+            particle.vy += -self.config.gravity * self.config.tick_time  # zmiana prędkości pionowej wynikająca z grawitacji
+
+            # kolizje
+            # sciany
+            if particle.y - self.config.atoms['radius'] - self.config.collision_tolerance <= 0:  # dolna
+                particle.vy = -particle.vy
+            elif particle.y + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['height']:  # gorna
+                particle.vy = -particle.vy
+
+            if particle.x - self.config.atoms['radius'] - self.config.collision_tolerance <= 0: # lewa
+                particle.vx = -particle.vx
+            elif particle.x + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['width']:  # prawa
+                particle.vx = -particle.vx
 
     def distance(self, p1, p2):
         return math.sqrt((p2[0]-p1[0])**2 + (p2[1]-p1[1])**2)

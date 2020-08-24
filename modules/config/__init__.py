@@ -6,6 +6,7 @@ class Config:
             config = json.load(f)
         for property in config:
             setattr(self, property, config[property])
+        self.tick_time = 1 / (self.time_factor * self.atoms['max_velocity'])
 
     def test(self):
         tests = [
@@ -20,5 +21,9 @@ class Config:
             {
                 'test': lambda c: 0 < c.atoms['number'] <= 0.25 * c.area['height'] * c.area['width'],
                 'error': 'Liczba atomów nie jest prawidłowa!'
+            },
+            {
+                'test': lambda c: c.time_factor >= min(c.area['height'], c.area['width']),
+                'error': 'Parametr czasu jest zbyt niski!'
             }
         ]

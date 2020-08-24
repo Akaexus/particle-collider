@@ -25,6 +25,7 @@ def on_draw():
     #                           anchor_x='center', anchor_y='center')
     # label.draw()
 
-pyglet.clock.schedule_interval(update_frames,1/1.0)
+
+pyglet.clock.schedule_interval(update_frames, 0.016)
 
 pyglet.app.run()

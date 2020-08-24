@@ -1,6 +1,6 @@
 {
   "atoms": {
-    "number": 20,
+    "number": 1,
     "mass": 1,
     "radius": 0.5,
     "max_velocity": 10
@@ -9,5 +9,7 @@
     "height": 50,
     "width": 20
   },
-  "gravity": 1
+  "gravity": 1,
+  "time_factor": 40,
+  "collision_tolerance": 0.05
 }
