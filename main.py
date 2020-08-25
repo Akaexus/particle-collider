@@ -26,6 +26,6 @@ def on_draw():
     # label.draw()
 
 
-pyglet.clock.schedule_interval(update_frames, 0.016)
+pyglet.clock.schedule_interval(update_frames, 1/60)
 
 pyglet.app.run()

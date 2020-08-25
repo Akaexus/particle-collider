@@ -19,9 +19,12 @@ class Engine:
             self.area.addParticle(Particle([x, y], [vx, vy], self.random_color(rand)))
 
     def random_color(self, rand):
-        return (rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255))
+        max_color = 250
+        return rand.randint(0, max_color), rand.randint(0, max_color), rand.randint(0, max_color)
 
     def tick(self):
+        index = 0
+
         for particle in self.area.particles:
             # v * t = s
             particle.x += particle.vx * self.config.tick_time
@@ -40,6 +43,48 @@ class Engine:
                 particle.vx = -particle.vx
             elif particle.x + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['width']:  # prawa
                 particle.vx = -particle.vx
+
+            # inne atomy
+
+
+            index2 = 0
+            for particle2 in self.area.particles:
+                if 2 * self.config.atoms['radius'] < self.distance([particle.x, particle.y], [particle2.x, particle2.y]) <= (2 * self.config.atoms['radius'] + self.config.collision_tolerance):
+                    # okreslamy prosta miedzy środkami atomów
+                    collision_axis_a = (particle2.y - particle.y) / (particle2.x - particle.x)
+                    collision_axis_b = particle2.y - collision_axis_a * particle2.x
+                    reversed_collision_axis_a = -1 / collision_axis_a
+                    # particle2
+                    # okreslamy prostą prostopadłą do osi zderzenia, ale przechodzącą przez punkt na
+                    # który wskazuje wektor prędkości
+                    velocity_point_x = particle2.x + particle2.vx
+                    velocity_point_y = particle2.y + particle2.vy
+                    reversed_collision_axis_b = velocity_point_y - reversed_collision_axis_a * velocity_point_x
+                    particle2_collision_parallel_velocity_vector_point_x = (reversed_collision_axis_b - collision_axis_b) / (collision_axis_a - reversed_collision_axis_a)
+                    particle2_collision_parallel_velocity_vector_point_y = particle2_collision_parallel_velocity_vector_point_x *  reversed_collision_axis_a + reversed_collision_axis_b
+                    p2_vector_vx = particle2_collision_parallel_velocity_vector_point_x - particle2.x
+                    p2_vector_vy = particle2_collision_parallel_velocity_vector_point_y - particle2.y
+
+                    velocity_point_x = particle.x + particle.vx
+                    velocity_point_y = particle.y + particle.vy
+                    reversed_collision_axis_b = velocity_point_y - reversed_collision_axis_a * velocity_point_x
+                    particle_collision_parallel_velocity_vector_point_x = (reversed_collision_axis_b - collision_axis_b) / (collision_axis_a - reversed_collision_axis_a)
+                    particle_collision_parallel_velocity_vector_point_y = particle_collision_parallel_velocity_vector_point_x *  reversed_collision_axis_a + reversed_collision_axis_b
+                    p1_vector_vx = particle_collision_parallel_velocity_vector_point_x - particle.x
+                    p1_vector_vy = particle_collision_parallel_velocity_vector_point_y - particle.y
+
+                    particle.vx -= p1_vector_vx
+                    particle.vy -= p1_vector_vy
+                    particle.vx += p2_vector_vx
+                    particle.vy += p2_vector_vy
+
+                    particle2.vx -= p2_vector_vx
+                    particle2.vy -= p2_vector_vy
+                    particle2.vx += p1_vector_vx
+                    particle2.vy += p1_vector_vy
+                index2+=1
+            index += 1
+            
 
     def distance(self, p1, p2):
         return math.sqrt((p2[0]-p1[0])**2 + (p2[1]-p1[1])**2)
@@ -112,7 +157,7 @@ class Engine:
                     self.coordinate_to_pixel(second_point[0]),
                     self.coordinate_to_pixel(second_point[1]),
                     width=max(self.unit_to_pixel(self.config.atoms['radius'])*0.25, 1),
-                    color=particle.color,
+                    color=map(lambda x: x + int((255 - x) * 0.7), particle.color),
                     batch=batch
                 ))
 

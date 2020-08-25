@@ -1,6 +1,6 @@
 {
   "atoms": {
-    "number": 1,
+    "number": 20,
     "mass": 1,
     "radius": 0.5,
     "max_velocity": 10
