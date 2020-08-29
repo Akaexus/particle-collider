@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-import json
+import yaml
 class Config:
     def __init__(self):
-        with open('config.json') as f:
-            config = json.load(f)
+        with open('config.yml') as f:
+            config = yaml.load(f, Loader=yaml.CLoader)
+        print(config)
         for property in config:
             setattr(self, property, config[property])
         self.tick_time = 1 / (self.time_factor * self.atoms['max_velocity'])
-        if len(self.duration):
+
+        # czas trwania symulacji
+        if 'duration' in config and len(self.duration):
             self.time_limited = True
             if 'ticks' in self.duration:
                 self.ticks_left = self.duration['ticks']
@@ -15,6 +18,9 @@ class Config:
                 self.ticks_left = int(self.duration['units'] / self.tick_time)
         else:
             self.time_limited = False
+
+        # detektor
+        self.detector
 
     def test(self):
         tests = [
