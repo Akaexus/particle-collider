@@ -7,6 +7,14 @@ class Config:
         for property in config:
             setattr(self, property, config[property])
         self.tick_time = 1 / (self.time_factor * self.atoms['max_velocity'])
+        if len(self.duration):
+            self.time_limited = True
+            if 'ticks' in self.duration:
+                self.ticks_left = self.duration['ticks']
+            elif 'units' in self.duration:
+                self.ticks_left = int(self.duration['units'] / self.tick_time)
+        else:
+            self.time_limited = False
 
     def test(self):
         tests = [

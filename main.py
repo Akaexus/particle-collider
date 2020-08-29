@@ -11,7 +11,11 @@ window = pyglet.window.Window(resizable=True)
 pyglet.gl.glClearColor(0.8, 0.8, 0.8, 0.8)
 def update_frames(dt):
     global engine
-    engine.tick()
+    global config
+    if config.time_limited and config.ticks_left > 0 or not config.time_limited:
+        engine.tick()
+        if config.time_limited:
+            config.ticks_left -= 1
 
 @window.event
 def on_draw():
