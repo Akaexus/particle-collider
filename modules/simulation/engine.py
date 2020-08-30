@@ -5,6 +5,7 @@ import secrets
 import pyglet
 import math
 
+
 class Engine:
     counter = 0
     collision_lock = []
@@ -14,6 +15,7 @@ class Engine:
         self.ticks_left = self.config.simulation_time
         self.area = Area(height=config.area['height'], width=config.area['width'])
         rand = secrets.SystemRandom()
+        self.area.particles = []
         for i in range(config.atoms['number']):
             x = rand.random() * (config.area['width'] - config.atoms['radius'] * 2) + config.atoms['radius']
             y = rand.random() * (config.area['height'] - config.atoms['radius'] * 2) + config.atoms['radius']
@@ -27,14 +29,12 @@ class Engine:
             self.collision_lock.append([])
             for j in range(self.config.atoms['number']):
                 self.collision_lock[i].append(False)
-
         # detektor
         self.detector = Detector(self.config)
 
     def random_color(self, rand):
         max_color = 250
         return rand.randint(0, max_color), rand.randint(0, max_color), rand.randint(0, max_color)
-
 
     def tick(self):
         index = 0
@@ -59,10 +59,8 @@ class Engine:
                 if self.config.detector['position'] <= particle.y <= self.config.detector['position'] + self.config.detector['height']:
                     self.detector.emit(particle, self.config.simulation_time - self.ticks_left)
                 particle.vx = -particle.vx
-
             # inne atomy
-            index2 = 0
-            for particle2 in self.area.particles:
+            for index2, particle2 in enumerate(self.area.particles):
                 if 0 < self.distance([particle.x, particle.y], [particle2.x, particle2.y]) <= (2 * self.config.atoms['radius'] + self.config.collision_tolerance):
                     if not (self.collision_lock[index][index2] and self.collision_lock[index2][index]):
                         self.collision_lock[index][index2] = True
@@ -101,9 +99,10 @@ class Engine:
                         particle2.vx += p1_vector_vx
                         particle2.vy += p1_vector_vy
                 else:
+                    # print(self.ticks_left)
+                    # print(self.config.atoms['number'], len(self.area.particles))
                     self.collision_lock[index][index2] = False
                     self.collision_lock[index2][index] = False
-                index2 += 1
             index += 1
             
 

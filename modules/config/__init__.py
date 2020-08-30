@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-import yaml
-
-
 class Config:
-    def __init__(self):
-        with open('config.yml') as f:
-            config = yaml.load(f, Loader=yaml.CLoader)
-        print(config)
+    def __init__(self, config):
         for property in config:
             setattr(self, property, config[property])
         self.tick_time = 1 / (self.time_factor * self.atoms['max_velocity'])

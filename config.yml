@@ -1,18 +1,48 @@
-atoms:
-  number: 20
-  mass: 1
-  radius: 0.5
-  max_velocity: 100
-area:
-  height: 50
-  width: 20
-gravity: 1
-time_factor: 10
-ticks_per_frame: 10
-collision_tolerance: 0.05
-detector:
-  height_multiplier: 10
-  position: 30
-  detection_delay: 200
-duration:
-  units: 20
+simulation:
+  atoms:
+    number: 20
+    mass: 1
+    radius: 0.5
+    max_velocity: 50
+  area:
+    height: 50
+    width: 20
+  gravity: 1
+  time_factor: 5
+  ticks_per_frame: 1
+  collision_tolerance: 0.05
+  detector:
+    height_multiplier: 10
+    position: 30
+    detection_delay: 200
+  duration:
+    units: 10
+benchmark:
+#  test1:
+#    description: "Wykaz ciśnienia liniowego w zależności od pozycji detektora"
+#    params:
+#      detector:
+#        position:
+#          start: 0
+#          stop: 45
+#          step: 2
+#      atoms:
+#        number:
+#          - 40
+#          - 100
+#          - 1000
+  test2:
+    description: "Wykaz ciśnienia liniowego w zależności od ilości cząstek"
+    params:
+      atoms:
+        number:
+          start: 25
+          stop: 200
+          step: 25
+      detector:
+        position:
+          - 0
+          - 10
+          - 20
+          - 30
+          - 40
