@@ -1,5 +1,6 @@
 from modules.simulation.area import Area
 from modules.simulation.particle import Particle
+from modules.simulation.detector import Detector
 import secrets
 import pyglet
 import math
@@ -10,6 +11,7 @@ class Engine:
 
     def __init__(self, config):
         self.config = config
+        self.ticks_left = self.config.simulation_time
         self.area = Area(height=config.area['height'], width=config.area['width'])
         rand = secrets.SystemRandom()
         for i in range(config.atoms['number']):
@@ -25,6 +27,9 @@ class Engine:
             self.collision_lock.append([])
             for j in range(self.config.atoms['number']):
                 self.collision_lock[i].append(False)
+
+        # detektor
+        self.detector = Detector(self.config)
 
     def random_color(self, rand):
         max_color = 250
@@ -43,14 +48,16 @@ class Engine:
 
             # kolizje
             # sciany
-            if particle.y - self.config.atoms['radius'] - self.config.collision_tolerance <= 0:  # dolna
+            if particle.vy < 0 and particle.y - self.config.atoms['radius'] - self.config.collision_tolerance <= 0:  # dolna
                 particle.vy = -particle.vy
-            elif particle.y + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['height']:  # gorna
+            elif particle.vy > 0 and particle.y + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['height']:  # gorna
                 particle.vy = -particle.vy
 
-            if particle.x - self.config.atoms['radius'] - self.config.collision_tolerance <= 0: # lewa
+            if particle.vx < 0 and particle.x - self.config.atoms['radius'] - self.config.collision_tolerance <= 0: # lewa
                 particle.vx = -particle.vx
-            elif particle.x + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['width']:  # prawa
+            elif particle.vx > 0 and particle.x + self.config.atoms['radius'] + self.config.collision_tolerance >= self.config.area['width']:  # prawa
+                if self.config.detector['position'] <= particle.y <= self.config.detector['position'] + self.config.detector['height']:
+                    self.detector.emit(particle, self.config.simulation_time - self.ticks_left)
                 particle.vx = -particle.vx
 
             # inne atomy
@@ -128,6 +135,14 @@ class Engine:
             width=self.area_width,
             height=self.area_height,
             color=(255, 255, 255),
+            batch=batch
+        )
+        detector = pyglet.shapes.Rectangle(
+            x=self.offset + self.area_width,
+            y=self.offset + self.unit_to_pixel(self.config.detector['position']),
+            width=max(1, self.area_width*0.02),
+            height=self.unit_to_pixel(self.config.detector['height']),
+            color=(255, 0, 0),
             batch=batch
         )
 

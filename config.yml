@@ -8,9 +8,11 @@ area:
   width: 20
 gravity: 1
 time_factor: 10
+ticks_per_frame: 10
 collision_tolerance: 0.05
 detector:
-  heightMultiplier: 5
+  height_multiplier: 10
   position: 30
+  detection_delay: 200
 duration:
   units: 20

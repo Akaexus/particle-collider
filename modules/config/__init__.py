@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import yaml
+
+
 class Config:
     def __init__(self):
         with open('config.yml') as f:
@@ -15,12 +17,12 @@ class Config:
             if 'ticks' in self.duration:
                 self.ticks_left = self.duration['ticks']
             elif 'units' in self.duration:
-                self.ticks_left = int(self.duration['units'] / self.tick_time)
+                self.simulation_time = int(self.duration['units'] / self.tick_time)
         else:
             self.time_limited = False
 
-        # detektor
-        self.detector
+        # detector
+        self.detector['height'] = self.detector['height_multiplier'] * self.atoms['radius']
 
     def test(self):
         tests = [

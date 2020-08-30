@@ -12,10 +12,14 @@ pyglet.gl.glClearColor(0.8, 0.8, 0.8, 0.8)
 def update_frames(dt):
     global engine
     global config
-    if config.time_limited and config.ticks_left > 0 or not config.time_limited:
-        engine.tick()
-        if config.time_limited:
-            config.ticks_left -= 1
+    for i in range(config.ticks_per_frame):
+        if config.time_limited and engine.ticks_left > 0 or not config.time_limited:
+            engine.tick()
+            if config.time_limited:
+                engine.ticks_left -= 1
+        elif config.time_limited and engine.ticks_left <= 0:
+            print('Ciśnienie liniowe: {}'.format(engine.detector.getPressure()))
+            exit()
 
 @window.event
 def on_draw():
